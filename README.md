@@ -17,12 +17,11 @@ A backend web application using FastAPI, SQLModel, and PostgreSQL, implementing 
 git clone https://github.com/JcatPy/fastapi_backend.git
 cd fastapi_backend
 
-### 2. Create Virtual Enviornment
-```bash
-python -m venv venv
-venv\Scripts\activate  # Windows
-# OR
-source venv/bin/activate  # macOS/Linux
+    ### 2. Create Virtual Enviornment
+    python -m venv venv
+    venv\Scripts\activate  # Windows
+    # OR
+    source venv/bin/activate  # macOS/Linux
 
 ### 3. Install Dependencies
 pip install -r requirements.txt
