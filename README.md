@@ -18,6 +18,7 @@ git clone https://github.com/JcatPy/fastapi_backend.git
 cd fastapi_backend
 
 ### 2. Create Virtual Enviornment
+```bash
 python -m venv venv
 venv\Scripts\activate  # Windows
 # OR
