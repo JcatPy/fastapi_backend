@@ -24,3 +24,7 @@ class UserOut(SQLModel):
 
     class Config:
         orm_mode = True
+
+class Userlogin(SQLModel):
+    email: EmailStr
+    password: str
