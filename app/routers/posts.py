@@ -15,6 +15,7 @@ def read_posts(session: Session = Depends(get_session)):
 
 @router.post("/posts", response_model=Post)
 def create_post(post: PostCreate, session: Session = Depends(get_session), get_current_user: int = Depends(get_current_user)):
+    print(get_current_user)
     new_post = Post(**post.dict())
     session.add(new_post)
     session.commit()
