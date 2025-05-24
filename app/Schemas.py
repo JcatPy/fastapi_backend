@@ -28,3 +28,10 @@ class UserOut(SQLModel):
 class Userlogin(SQLModel):
     email: EmailStr
     password: str
+
+class Token(SQLModel):
+    access_token: str
+    token_type: str
+
+class TokenData(SQLModel):
+    id: Optional[str] = None
