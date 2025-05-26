@@ -41,4 +41,4 @@ def get_current_user(token: str= Depends(oauth2_scheme), session: Session = Depe
 
     token_data = verify_access_token(token, credentials_exception)
     user = session.get(User, token_data.id)
-    return
+    return user if user else None

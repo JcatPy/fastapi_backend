@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlmodel import SQLModel, Field
 from typing import Optional
+
 # Define the Post model
 class Post(SQLModel, table=True):
     __tablename__ = "posts"
@@ -10,6 +11,7 @@ class Post(SQLModel, table=True):
     content: str
     published: bool = Field(default=True, nullable=False)
     created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    owner_id: Optional[int] = Field(default=None, foreign_key="users.id", ondelete="CASCADE")
 
     class Config:
         orm_mode = True

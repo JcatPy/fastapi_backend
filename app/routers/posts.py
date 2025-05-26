@@ -15,8 +15,7 @@ def read_posts(session: Session = Depends(get_session)):
 
 @router.post("/posts", response_model=Post)
 def create_post(post: PostCreate, session: Session = Depends(get_session), get_current_user: int = Depends(get_current_user)):
-    print(get_current_user)
-    new_post = Post(**post.dict())
+    new_post = Post(**post.dict(), owner_id=get_current_user.id)
     session.add(new_post)
     session.commit()
     session.refresh(new_post)
@@ -32,9 +31,11 @@ def read_post(post_id: int, session: Session = Depends(get_session)):
 
 @router.delete("/posts/{post_id}", response_model=Post)
 def delete_post(post_id: int, session: Session = Depends(get_session), get_current_user: int = Depends(get_current_user)):
-    post = session.get(Post, post_id)
+    post = session.get(Post, post_id) # Fetch the post by ID
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
+    if post.owner_id != get_current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this post")
     session.delete(post)
     session.commit()
     return post
@@ -61,7 +62,6 @@ def update_post(post_id: int, post_update: PostUpdate, session: Session = Depend
 @router.get("/")
 def root():
     return {"status": "API is running"}
-
 
 
 
