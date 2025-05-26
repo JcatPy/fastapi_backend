@@ -31,7 +31,7 @@ def read_post(post_id: int, session: Session = Depends(get_session)):
     return post
 
 @router.delete("/posts/{post_id}", response_model=Post)
-def delete_post(post_id: int, session: Session = Depends(get_session)):
+def delete_post(post_id: int, session: Session = Depends(get_session), get_current_user: int = Depends(get_current_user)):
     post = session.get(Post, post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -40,7 +40,8 @@ def delete_post(post_id: int, session: Session = Depends(get_session)):
     return post
 
 @router.put("/posts/{post_id}", response_model=Post)
-def update_post(post_id: int, post_update: PostUpdate, session: Session = Depends(get_session)):
+def update_post(post_id: int, post_update: PostUpdate, session: Session = Depends(get_session),
+                get_current_user: int = Depends(get_current_user)):
     db_post = session.get(Post, post_id)
     if not db_post:
         raise HTTPException(status_code=404, detail="Post not found")

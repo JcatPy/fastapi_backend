@@ -5,10 +5,11 @@ from ..model import User
 from ..utils import verify
 from ..oauth2 import create_access_token
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from ..Schemas import Token
 
 router = APIRouter(tags=["auth"])
 
-@router.post("/login")
+@router.post("/login", response_model= Token)
 def login(
     user_credentials: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session)
