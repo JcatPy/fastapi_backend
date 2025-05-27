@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel
-from pydantic import EmailStr
+from pydantic import EmailStr, BaseModel
+
 
 class PostCreate(SQLModel):
     title: str
@@ -17,7 +18,7 @@ class UserCreate(SQLModel):
     email: str
     password: str
 
-class UserOut(SQLModel):
+class UserOut(BaseModel):
     id: int
     email: EmailStr
     created_at: datetime
@@ -35,3 +36,16 @@ class Token(SQLModel):
 
 class TokenData(SQLModel):
     id: Optional[str] = None
+
+class PostOut(BaseModel):
+    id: int
+    title: str
+    content: str
+    published: bool
+    created_at: datetime
+    owner_id: int
+    owner: Optional[UserOut]  # nested user
+
+    class Config:
+        orm_mode = True
+

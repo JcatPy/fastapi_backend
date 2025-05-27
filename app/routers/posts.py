@@ -1,20 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException, FastAPI, status, Response
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 from ..database import get_session
-from ..Schemas import PostCreate, PostUpdate
-from ..model import Post
+from ..Schemas import PostCreate, PostUpdate, PostOut
+from ..model import Post, User
 from ..oauth2 import get_current_user
 
 router = APIRouter()
 
-@router.get("/posts", response_model=list[Post])
+@router.get("/posts", response_model=list[PostOut])
 def read_posts(session: Session = Depends(get_session)):
-    posts = session.exec(select(Post)).all()
+    statement = select(Post).options(selectinload(Post.owner))
+    posts = session.exec(statement).all()
     print("Fetched posts:", posts)
     return posts
 
 @router.post("/posts", response_model=Post)
-def create_post(post: PostCreate, session: Session = Depends(get_session), get_current_user: int = Depends(get_current_user)):
+def create_post(post: PostCreate, session: Session = Depends(get_session), get_current_user: User = Depends(get_current_user)):
     new_post = Post(**post.dict(), owner_id=get_current_user.id)
     session.add(new_post)
     session.commit()
@@ -59,11 +61,26 @@ def update_post(post_id: int, post_update: PostUpdate, session: Session = Depend
 
 
 
-@router.get("/")
-def root():
-    return {"status": "API is running"}
+@router.get("/", response_model=list[PostOut])
+def get_posts(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+    limit: int = 10,
+    skip: int = 0,
+    search: str = ""
+):
+    query = select(Post)
 
+    if search:
+        query = query.where(
+            (Post.title.ilike(f"{search}%")) |
+            (Post.content.ilike(f"{search}%"))
+        )
 
+    query = query.limit(limit).offset(skip)
+
+    posts = session.exec(query).all()
+    return posts
 
 # The below code is crud operations for posts using psycopg2(or raw sql queries)
 '''
