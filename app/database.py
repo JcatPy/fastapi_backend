@@ -1,6 +1,7 @@
 from sqlmodel import Session, SQLModel, create_engine
+from .config import settings
 
-sql_alchemy_database_url = "postgresql+psycopg2://postgres:Student%40eacc18@localhost:3453/fastapi"
+sql_alchemy_database_url = f"postgresql+psycopg2://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}"
 
 # Create the SQLAlchemy engine
 engine = create_engine(sql_alchemy_database_url)
