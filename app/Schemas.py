@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel
 from pydantic import EmailStr, BaseModel
-
+from pydantic import conint
 
 class PostCreate(SQLModel):
     title: str
@@ -45,6 +45,13 @@ class PostOut(BaseModel):
     created_at: datetime
     owner_id: int
     owner: Optional[UserOut]  # nested user
+
+    class Config:
+        orm_mode = True
+
+class Vote_s(SQLModel):
+    post_id: int
+    dir: conint(ge=0, le=1)  # 0 or 1, where 1 means upvote and 0 means downvote
 
     class Config:
         orm_mode = True
