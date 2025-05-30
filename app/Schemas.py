@@ -56,3 +56,16 @@ class Vote_s(SQLModel):
     class Config:
         orm_mode = True
 
+class PostWithVotes(SQLModel):
+    id: int
+    title: str
+    content: str
+    published: bool
+    created_at: datetime
+    owner_id: Optional[int]
+    votes: int  # This is the additional field from aggregation
+
+    class Config:
+        orm_mode = True
+
+

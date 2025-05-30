@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from sqlalchemy.orm import selectinload
 from ..database import get_session
-from ..Schemas import PostCreate, PostUpdate, PostOut
-from ..model import Post, User
+from ..Schemas import PostCreate, PostUpdate, PostOut, PostWithVotes
+from ..model import Post, User, Vote
 from ..oauth2 import get_current_user
 
 router = APIRouter()
@@ -61,7 +61,7 @@ def update_post(post_id: int, post_update: PostUpdate, session: Session = Depend
 
 
 
-@router.get("/", response_model=list[PostOut])
+@router.get("/", response_model=list[PostWithVotes])
 def get_posts(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
@@ -80,7 +80,20 @@ def get_posts(
     query = query.limit(limit).offset(skip)
 
     posts = session.exec(query).all()
-    return posts
+
+    stmt = (
+        select(Post, func.coalesce(func.count(Vote.post_id), 0).label("votes"))
+        .outerjoin(Vote, Vote.post_id == Post.id)
+        .group_by(Post.id)
+    )
+    results = session.exec(stmt).all()
+
+    post_list = [
+        PostWithVotes(**post.dict(), votes=votes)
+        for post, votes in results
+    ]
+
+    return post_list
 
 # The below code is crud operations for posts using psycopg2(or raw sql queries)
 '''
