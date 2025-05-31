@@ -7,7 +7,8 @@ from .routers import posts, users, auth, vote
 app = FastAPI()
 
 # This runs once when the app starts
-@app.on_event("startup")
+#alembic handles everything
+'''@app.on_event("startup")
 def on_startup():
     create_db_and_tables()
 
@@ -15,6 +16,7 @@ def on_startup():
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+'''
 
 app.include_router(posts.router)
 app.include_router(users.router)
